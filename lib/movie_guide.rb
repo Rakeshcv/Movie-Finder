@@ -1,4 +1,5 @@
 require 'movie'
+require 'helper'
 
 class MovieGuide
 
@@ -54,6 +55,7 @@ class MovieGuide
     # Keep asking for user input until we get a valid action
     until MovieGuide.options.include?(user_input)
       puts "Options ==>  " << MovieGuide.options.join(", ")
+      print "--> "
       user_input = gets.chomp.downcase.strip
     end
     user_input
@@ -63,11 +65,11 @@ class MovieGuide
     case user_input
     when 'list'
       puts "listing..."
+        list
     when 'find'
       puts "finding..."
     when 'add'
       add
-      puts "Adding..."
     when 'quit'
       return :quit
     end
@@ -85,7 +87,43 @@ class MovieGuide
   end
 
   def add
+    output_header('Add a movie')
 
+    puts "Leaving blank will result in error."
+
+    movie = Movie.get_movie_info
+
+    if movie.save_to_file
+      puts "Movie Added"
+    else
+      puts "Error - Movie couldn't be added"
+    end
   end
+
+  def list
+    output_header('Listing movies')
+    movies = Movie.saved_movies
+    output_result(movies)
+  end
+
+  def output_header(text)
+    puts "\n#{text.upcase.center(60)}\n\n"
+  end
+
+  def output_result(movies=[])
+    print " " + "Name".ljust(30)
+    print " " + "Genre".ljust(20)
+    print " " + "Rating".rjust(6) + "\n"
+    puts "-" * 60
+    movies.each do |rest|
+      line = " " << rest.name.titleize.ljust(30)
+      line << " " + rest.genre.titleize.ljust(20)
+      line << " " + rest.rating.rjust(6)
+      puts line
+    end
+    puts "No listings found" if movies.empty?
+    puts "-" * 60
+  end
+
 
 end

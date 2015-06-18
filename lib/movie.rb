@@ -1,5 +1,13 @@
 class Movie
 
+  attr_accessor :rating, :name, :genre
+
+  def initialize(args = {})
+    @name = args[:name] || ''
+    @genre = args[:genre] || ''
+    @rating = args[:rating] || ''
+  end
+
   def self.set_filepath=(filepath)
     @@file_name = filepath
   end
@@ -28,4 +36,51 @@ class Movie
     File.open(@@file_name, "w") unless file_exists?
     return file_usable?
   end
+
+  def self.get_movie_info
+    args = {}
+
+    print "Movie name: "
+    args[:name] = gets.chomp.strip
+
+    print "Genre: "
+    args[:genre] = gets.chomp.strip
+
+    print "Rating: "
+    args[:rating] = gets.chomp.strip
+
+    return self.new(args)
+  end
+
+  def self.saved_movies
+    movies = []
+
+    if file_usable?
+      file = File.open(@@file_name,'r')
+      file.each_line do |line|
+        movies << Movie.new.read_each_line(line.chomp)
+      end
+      file.close
+    end
+    return movies
+  end
+
+  def read_each_line(line)
+    line_array = line.split("\t")
+    @name,@genre,@rating = line_array
+    return self
+  end
+
+  def save_to_file
+    return false unless @name.length > 0
+    return false unless @genre.length > 0
+    return false unless @rating.length > 0
+    return false unless Movie.file_usable?
+    File.open(@@file_name, 'a') do |file|
+      file.puts "#{[@name, @genre, @rating].join("\t")}\n"
+    end
+    return true
+  end
+
+
 end
