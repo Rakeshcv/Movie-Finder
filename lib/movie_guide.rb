@@ -160,10 +160,10 @@ class MovieGuide
     print " " + "Genre".ljust(20)
     print " " + "Rating".rjust(6) + "\n"
     puts "-" * 60
-    movies.each do |rest|
-      line = " " << rest.name.titleize.ljust(30)
-      line << " " + rest.genre.titleize.ljust(20)
-      line << " " + rest.rating.rjust(6)
+    movies.each do |movie|
+      line = " " << movie.name.titleize.ljust(30)
+      line << " " + movie.genre.titleize.ljust(20)
+      line << " " + movie.rating.rjust(6)
       puts line
     end
     puts "No listings found" if movies.empty?
