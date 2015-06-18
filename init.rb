@@ -17,3 +17,7 @@ APP_ROOT = File.dirname(__FILE__)
 
 
 $:.unshift(File.join(APP_ROOT, 'lib'))
+require 'movie_guide'
+
+movie_guide = MovieGuide.new('movie.txt')
+movie_guide.fire!
