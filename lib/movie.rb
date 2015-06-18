@@ -37,6 +37,28 @@ class Movie
     return file_usable?
   end
 
+
+  def self.delete_movie(keyword ='')
+    return false if keyword.length == 0
+    return false unless Movie.file_usable?
+    movie = ''
+    movie_found = false
+
+    movies = saved_movies
+
+
+    movies.each do |m|
+      movie << "#{[m.name, m.genre, m.rating].join("\t")}\n" unless m.name.downcase == keyword
+      movie_found = true if m.name.downcase == keyword
+    end
+
+    File.open(@@file_name,'w') do |file|
+      file.puts movie
+    end
+
+    movie_found
+  end
+
   def self.get_movie_info
     args = {}
 
@@ -46,7 +68,7 @@ class Movie
     print "Genre: "
     args[:genre] = gets.chomp.strip
 
-    print "Rating: "
+    print "Rating:[1-10] "
     args[:rating] = gets.chomp.strip
 
     return self.new(args)
@@ -58,7 +80,7 @@ class Movie
     if file_usable?
       file = File.open(@@file_name,'r')
       file.each_line do |line|
-        movies << Movie.new.read_each_line(line.chomp)
+        movies << Movie.new.read_each_line(line.chomp) unless line.chomp.empty?
       end
       file.close
     end
@@ -75,12 +97,14 @@ class Movie
     return false unless @name.length > 0
     return false unless @genre.length > 0
     return false unless @rating.length > 0
+    return false unless ( @rating.to_i.is_a?(Integer) && @rating.to_i.between?(1,10) )
     return false unless Movie.file_usable?
     File.open(@@file_name, 'a') do |file|
       file.puts "#{[@name, @genre, @rating].join("\t")}\n"
     end
     return true
   end
+
 
 
 end
